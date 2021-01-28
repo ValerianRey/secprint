@@ -10,7 +10,7 @@ before_install:
 deploy:
   provider: pypi
   username: "__token__"
-  password: "pypi-AgEIcHlwaS5vcmcCJGZmMGMxNGM4LTVjZGQtNDA1Ny05MDZiLTZjNmY5Mjg1ODllMQACP3sicGVybWlzc2lvbnMiOiB7InByb2plY3RzIjogWyJjb250ZXh0cHJpbnRlciJdfSwgInZlcnNpb24iOiAxfQAABiDfUus08cRp2at9KjsdsLbwVD26eGqW3V7193Ba6Vw3Aw"
+  password: "$PYPI_TOKEN"
   on:
     branch: main
 
