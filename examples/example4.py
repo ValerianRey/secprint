@@ -1,0 +1,30 @@
+from context_printer import ContextPrinter as Ctp
+from context_printer import Color
+
+Ctp.enter_section('Mega section of the dead', color=Color.BLINK)
+Ctp.enter_section('Normal section', Color.RED)
+Ctp.enter_section('Subsection', Color.GREEN)
+for i in range(15):
+    Ctp.print('This ', end='')
+    Ctp.print('is ', blink=True, print_headers=False, end='')
+    Ctp.print('dope ', print_headers=False, end='')
+    Ctp.print('shit', print_headers=False, blink=True)
+Ctp.exit_last_section()
+
+print('NONE - ' + Color.NONE + 'YOOOO' + Color.END)
+print('BLACK - ' + Color.BLACK + 'YOOOO' + Color.END)
+print('DARK_GRAY - ' + Color.DARK_GRAY + 'YOOOO' + Color.END)
+print('GRAY - ' + Color.GRAY + 'YOOOO' + Color.END)
+print('WHITE - ' + Color.WHITE + 'YOOOO' + Color.END)
+print('RED - ' + Color.RED + 'YOOOO' + Color.END)
+print('GREEN - ' + Color.GREEN + 'YOOOO' + Color.END)
+print('YELLOW - ' + Color.YELLOW + 'YOOOO' + Color.END)
+print('BLUE - ' + Color.BLUE + 'YOOOO' + Color.END)
+print('PURPLE - ' + Color.PURPLE + 'YOOOO' + Color.END)
+print('CYAN - ' + Color.CYAN + 'YOOOO' + Color.END)
+print('DARK_RED - ' + Color.DARK_RED + 'YOOOO' + Color.END)
+print('DARK_GREEN - ' + Color.DARK_GREEN + 'YOOOO' + Color.END)
+print('DARK_YELLOW - ' + Color.DARK_YELLOW + 'YOOOO' + Color.END)
+print('DARK_BLUE - ' + Color.DARK_BLUE + 'YOOOO' + Color.END)
+print('DARK_PURPLE - ' + Color.DARK_PURPLE + 'YOOOO' + Color.END)
+print('DARK_CYAN - ' + Color.DARK_CYAN + 'YOOOO' + Color.END)
