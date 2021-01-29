@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd context_printer
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+

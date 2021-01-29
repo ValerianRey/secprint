@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd context_printer
+python3 setup.py sdist bdist_wheel
+twine check dist/*
+
