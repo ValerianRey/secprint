@@ -37,7 +37,10 @@ class Color:
 
     @staticmethod
     def text_to_color(text: str):
-        return getattr(Color, text.upper())
+        if not (text.startswith('\033[') or text == ''):
+            return getattr(Color, text.upper())
+        else:
+            return text
 
 
 class ContextPrinter:
@@ -83,8 +86,7 @@ class ContextPrinter:
         :param color: color to use for this section.
         :param header: string to use as header for the whole section.
         """
-        if type(color) == str:
-            color = Color.text_to_color(color)
+        color = Color.text_to_color(color)
 
         ContextPrinter.check_init()
         if title is not None:
@@ -137,8 +139,7 @@ class ContextPrinter:
         :param rewrite: if set to true, rewrites over the current line instead of printing a new line.
         :param end: character to print at the end of the text.
         """
-        if type(color) == str:
-            color = Color.text_to_color(color)
+        color = Color.text_to_color(color)
 
         ContextPrinter.check_init()
         lines = text.split('\n')
