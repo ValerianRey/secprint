@@ -1,5 +1,5 @@
-from output_decorator.output_decorator import ContextPrinter as Ctp
-from output_decorator.output_decorator import Color
+from context_printer import ContextPrinter as Ctp
+from context_printer import Color
 
 
 class Example1:
