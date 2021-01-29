@@ -9,7 +9,7 @@ for i in range(15):
     Ctp.print('is ', blink=True, print_headers=False, end='')
     Ctp.print('dope ', print_headers=False, end='')
     Ctp.print('shit', print_headers=False, blink=True)
-Ctp.exit_last_section()
+Ctp.exit_section()
 
 print('NONE - ' + Color.NONE + 'YOOOO' + Color.END)
 print('BLACK - ' + Color.BLACK + 'YOOOO' + Color.END)

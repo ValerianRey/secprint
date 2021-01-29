@@ -1,3 +1,6 @@
+from typing import Union
+
+
 class Color:
     """
     Color class regrouping the ANSI escape sequences to print with colors and effects in console.
@@ -31,6 +34,10 @@ class Color:
 
     def __add__(self, other):
         return self + other
+
+    @staticmethod
+    def text_to_color(text: str):
+        return getattr(Color, text.upper())
 
 
 class ContextPrinter:
@@ -69,13 +76,16 @@ class ContextPrinter:
         ContextPrinter.self.headers.append(color + header + Color.END)
 
     @staticmethod
-    def enter_section(title: str = None, color: Color = Color.NONE, header: str = '█ ') -> None:
+    def enter_section(title: str = None, color: Union[Color, str] = Color.NONE, header: str = '█ ') -> None:
         """
         Enter a new section with the corresponding color code and prints the corresponding title.
         :param title: name of the section.
         :param color: color to use for this section.
         :param header: string to use as header for the whole section.
         """
+        if type(color) == str:
+            color = Color.text_to_color(color)
+
         ContextPrinter.check_init()
         if title is not None:
             ContextPrinter.print(title, color=color, bold=True)
@@ -114,7 +124,7 @@ class ContextPrinter:
               text + Color.END, end=end)
 
     @staticmethod
-    def print(text: str = '', color: Color = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
+    def print(text: str = '', color: Union[Color, str] = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
               print_headers: bool = True, rewrite: bool = False, end: str = '\n') -> None:
         """
         Print the sections' headers and the input text
@@ -127,8 +137,11 @@ class ContextPrinter:
         :param rewrite: if set to true, rewrites over the current line instead of printing a new line.
         :param end: character to print at the end of the text.
         """
+        if type(color) == str:
+            color = Color.text_to_color(color)
+
         ContextPrinter.check_init()
         lines = text.split('\n')
         for line in lines:
             ContextPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
-                                        print_headers=print_headers,rewrite=rewrite, end=end)
+                                        print_headers=print_headers, rewrite=rewrite, end=end)
