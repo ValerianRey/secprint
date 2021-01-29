@@ -16,7 +16,7 @@ class Example3:
     def end_stuff(self):
         self.sub_routine.end_stuff()
         Ctp.print("Example3 is done doing stuff")
-        Ctp.exit_last_section()
+        Ctp.exit_section()
 
 
 ex = Example3()
