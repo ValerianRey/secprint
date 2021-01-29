@@ -83,7 +83,7 @@ class ContextPrinter:
         ContextPrinter.__add_header(header, color)
 
     @staticmethod
-    def exit_last_section() -> None:
+    def exit_section() -> None:
         """
         Exit the last section added.
         """

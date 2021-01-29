@@ -14,7 +14,7 @@ class Example1:
     @staticmethod
     def end_stuff():
         Ctp.print("Example1 is done doing stuff")
-        Ctp.exit_last_section()
+        Ctp.exit_section()
 
 
 
