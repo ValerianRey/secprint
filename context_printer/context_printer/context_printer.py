@@ -70,6 +70,8 @@ class ContextPrinter:
         ContextPrinter.self.headers = []
         ContextPrinter.self.activated = True
         ContextPrinter.self.max_depth = None
+        ContextPrinter.self.automatic_skip = False
+        ContextPrinter.self.buffered_skiplines = 0
 
     @staticmethod
     def __add_header(header: str, color: Color) -> None:
@@ -101,6 +103,10 @@ class ContextPrinter:
         """
         Exit the last section added.
         """
+        if ContextPrinter.self.automatic_skip:
+            if ContextPrinter.self.max_depth is None or ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers):
+                ContextPrinter.self.buffered_skiplines += 1
+
         if ContextPrinter.self.activated:
             ContextPrinter.self.headers = ContextPrinter.self.headers[:-1]
 
@@ -146,7 +152,14 @@ class ContextPrinter:
         if ContextPrinter.self.activated and (ContextPrinter.self.max_depth is None or
                                               ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers)):
             color = Color.text_to_color(color)
-            lines = text.split('\n')
+
+            if ContextPrinter.self.automatic_skip:
+                prefix = '\n' * ContextPrinter.self.buffered_skiplines
+                ContextPrinter.self.buffered_skiplines = 0
+            else:
+                prefix = ''
+
+            lines = (prefix + text).split('\n')
             for line in lines:
                 ContextPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
                                             print_headers=print_headers, rewrite=rewrite, end=end)
@@ -172,9 +185,19 @@ class ContextPrinter:
         """
         Sets a maximum number of nested sections after which the printer will stop printing (it will still be able to enter or exit
         deeper sections but without printing their title or their header at all).
-        :param value: value to set the
+        :param value: value to set to the max depth parameter.
         """
         ContextPrinter.check_init()
         ContextPrinter.self.max_depth = value
+
+    @staticmethod
+    def set_automatic_skip(value: bool):
+        """
+        Sets on or off the automatic skip-line mode of the printer. When it's set to True, it will automatically skip an appropriate
+        number of lines when exiting a section. When set to false it will not do anything special when exiting a section.
+        :param value: value to set on or off the automatic skip-line mode.
+        """
+        ContextPrinter.check_init()
+        ContextPrinter.self.automatic_skip = value
 
 
