@@ -68,6 +68,8 @@ class ContextPrinter:
         Reset the parameters of the decorator.
         """
         ContextPrinter.self.headers = []
+        ContextPrinter.self.activated = True
+        ContextPrinter.self.max_depth = None
 
     @staticmethod
     def __add_header(header: str, color: Color) -> None:
@@ -86,20 +88,21 @@ class ContextPrinter:
         :param color: color to use for this section.
         :param header: string to use as header for the whole section.
         """
-        color = Color.text_to_color(color)
-
         ContextPrinter.check_init()
-        if title is not None:
-            ContextPrinter.print(title, color=color, bold=True)
 
-        ContextPrinter.__add_header(header, color)
+        if ContextPrinter.self.activated:
+            color = Color.text_to_color(color)
+            if title is not None:
+                ContextPrinter.print(title, color=color, bold=True)
+            ContextPrinter.__add_header(header, color)
 
     @staticmethod
     def exit_section() -> None:
         """
         Exit the last section added.
         """
-        ContextPrinter.self.headers = ContextPrinter.self.headers[:-1]
+        if ContextPrinter.self.activated:
+            ContextPrinter.self.headers = ContextPrinter.self.headers[:-1]
 
     @staticmethod
     def __print_line(text: str = '', color: Color = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
@@ -139,10 +142,39 @@ class ContextPrinter:
         :param rewrite: if set to true, rewrites over the current line instead of printing a new line.
         :param end: character to print at the end of the text.
         """
-        color = Color.text_to_color(color)
-
         ContextPrinter.check_init()
-        lines = text.split('\n')
-        for line in lines:
-            ContextPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
-                                        print_headers=print_headers, rewrite=rewrite, end=end)
+        if ContextPrinter.self.activated and (ContextPrinter.self.max_depth is None or
+                                              ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers)):
+            color = Color.text_to_color(color)
+            lines = text.split('\n')
+            for line in lines:
+                ContextPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
+                                            print_headers=print_headers, rewrite=rewrite, end=end)
+
+    @staticmethod
+    def activate():
+        """
+        Reactivate the printer so that it gets back to work after a call to deactivate.
+        """
+        ContextPrinter.check_init()
+        ContextPrinter.self.activated = True
+
+    @staticmethod
+    def deactivate():
+        """
+        Deactivate the printer so that it does not do anything (printing, entering sections, exiting sections) until reactivation.
+        """
+        ContextPrinter.check_init()
+        ContextPrinter.self.activated = False
+
+    @staticmethod
+    def set_max_depth(value: int):
+        """
+        Sets a maximum number of nested sections after which the printer will stop printing (it will still be able to enter or exit
+        deeper sections but without printing their title or their header at all).
+        :param value: value to set the
+        """
+        ContextPrinter.check_init()
+        ContextPrinter.self.max_depth = value
+
+
