@@ -83,7 +83,7 @@ class ContextPrinter:
         ContextPrinter.self.headers.append(color + header + Color.END)
 
     @staticmethod
-    def enter_section(title: str = None, color: Union[Color, str] = Color.NONE, header: str = '█ ') -> None:
+    def enter_section(title=None, color: Union[Color, str] = Color.NONE, header: str = '█ ') -> None:
         """
         Enter a new section with the corresponding color code and prints the corresponding title.
         :param title: name of the section.
@@ -135,7 +135,7 @@ class ContextPrinter:
               text + Color.END, end=end)
 
     @staticmethod
-    def print(text: str = '', color: Union[Color, str] = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
+    def print(text='', color: Union[Color, str] = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
               print_headers: bool = True, rewrite: bool = False, end: str = '\n') -> None:
         """
         Print the sections' headers and the input text
@@ -149,6 +149,16 @@ class ContextPrinter:
         :param end: character to print at the end of the text.
         """
         ContextPrinter.check_init()
+
+        if not isinstance(text, str):
+            try:
+                text = str(text)
+            except AttributeError:
+                try:
+                    text = repr(text)
+                except AttributeError:
+                    raise AttributeError('text object is not a string and does not implement __str__ or __repr__')
+
         if ContextPrinter.self.activated and (ContextPrinter.self.max_depth is None or
                                               ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers)):
             color = Color.text_to_color(color)
