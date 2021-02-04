@@ -1,7 +1,8 @@
-from typing import Union
+from enum import Enum
+from typing import Union, Optional
 
 
-class Color:
+class Color(str, Enum):
     """
     Color class regrouping the ANSI escape sequences to print with colors and effects in console.
     """
@@ -32,15 +33,23 @@ class Color:
     DARK_PURPLE = '\033[35m'
     DARK_CYAN = '\033[36m'
 
-    def __add__(self, other):
-        return self + other
+    @staticmethod
+    def from_string(color: str) -> 'Color':
+        """
+        Get a Color from a string. For example "dark_green" will get you the color DARK_GREEN.
+        :param color: color stored as the string name of the color.
+        """
+        return getattr(Color, color.upper(), '')
 
     @staticmethod
-    def text_to_color(text: str):
-        if not (text.startswith('\033[') or text == ''):
-            return getattr(Color, text.upper())
-        else:
-            return text
+    def remove_colors(text: str) -> str:
+        """
+        Return a new text corresponding to the input text but with all colors removed.
+        :param text: text from which to remove the colors
+        """
+        for color in Color:
+            text = text.replace(color, '')
+        return text
 
 
 class ContextPrinter:
@@ -72,6 +81,8 @@ class ContextPrinter:
         ContextPrinter.self.max_depth = None
         ContextPrinter.self.automatic_skip = False
         ContextPrinter.self.buffered_skiplines = 0
+        ContextPrinter.self.coloring = True
+        ContextPrinter.self.default_header = '█ '
 
     @staticmethod
     def __add_header(header: str, color: Color) -> None:
@@ -83,17 +94,22 @@ class ContextPrinter:
         ContextPrinter.self.headers.append(color + header + Color.END)
 
     @staticmethod
-    def enter_section(title=None, color: Union[Color, str] = Color.NONE, header: str = '█ ') -> None:
+    def enter_section(title=None, color: Union[Color, str] = Color.NONE, header: Optional[str] = None) -> None:
         """
         Enter a new section with the corresponding color code and prints the corresponding title.
         :param title: name of the section.
         :param color: color to use for this section.
-        :param header: string to use as header for the whole section.
+        :param header: string to use as header for the whole section. Leave it as None to use the default value. Use an empty
+        string ('') to have no header.
         """
         ContextPrinter.check_init()
 
+        if header is None:
+            header = ContextPrinter.self.default_header
+
         if ContextPrinter.self.activated:
-            color = Color.text_to_color(color)
+            if not isinstance(color, Color):
+                color = Color.from_string(color)
             if title is not None:
                 ContextPrinter.print(title, color=color, bold=True)
             ContextPrinter.__add_header(header, color)
@@ -128,11 +144,19 @@ class ContextPrinter:
             print('\r', end='')
 
         if print_headers:
-            for header in ContextPrinter.self.headers:
-                print(header, end='')
+            if ContextPrinter.self.coloring:
+                for header in ContextPrinter.self.headers:
+                    print(header, end='')
+            else:
+                for header in ContextPrinter.self.headers:
+                    print(Color.remove_colors(header), end='')
 
-        print(color + (Color.BOLD if bold else '') + (Color.UNDERLINE if underline else '') + (Color.BLINK if blink else '') +
-              text + Color.END, end=end)
+        if ContextPrinter.self.coloring:
+            text = color + (Color.BOLD if bold else '') + (Color.UNDERLINE if underline else '') + \
+                   (Color.BLINK if blink else '') + text + Color.END
+        else:
+            text = Color.remove_colors(text)  # we still remove the colors in case the user included them in the text itself
+        print(text, end=end)
 
     @staticmethod
     def print(text='', color: Union[Color, str] = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
@@ -150,18 +174,19 @@ class ContextPrinter:
         """
         ContextPrinter.check_init()
 
-        if not isinstance(text, str):
-            try:
-                text = str(text)
-            except AttributeError:
-                try:
-                    text = repr(text)
-                except AttributeError:
-                    raise AttributeError('text object is not a string and does not implement __str__ or __repr__')
-
         if ContextPrinter.self.activated and (ContextPrinter.self.max_depth is None or
                                               ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers)):
-            color = Color.text_to_color(color)
+            if not isinstance(text, str):
+                try:
+                    text = str(text)
+                except AttributeError:
+                    try:
+                        text = repr(text)
+                    except AttributeError:
+                        raise AttributeError('text object is not a string and does not implement __str__ or __repr__')
+
+            if not isinstance(color, Color):
+                color = Color.from_string(color)
 
             if ContextPrinter.self.automatic_skip:
                 prefix = '\n' * ContextPrinter.self.buffered_skiplines
@@ -175,7 +200,7 @@ class ContextPrinter:
                                             print_headers=print_headers, rewrite=rewrite, end=end)
 
     @staticmethod
-    def activate():
+    def activate() -> None:
         """
         Reactivate the printer so that it gets back to work after a call to deactivate.
         """
@@ -183,7 +208,7 @@ class ContextPrinter:
         ContextPrinter.self.activated = True
 
     @staticmethod
-    def deactivate():
+    def deactivate() -> None:
         """
         Deactivate the printer so that it does not do anything (printing, entering sections, exiting sections) until reactivation.
         """
@@ -191,7 +216,18 @@ class ContextPrinter:
         ContextPrinter.self.activated = False
 
     @staticmethod
-    def set_max_depth(value: int):
+    def set_coloring(value: bool) -> None:
+        """
+        Sets on or off the coloring of the text printed. This can be used to deactivate coloring when running a script on a console
+        that does not support ANSI escape characters, by just adding a call to set_coloring instead of modifying every call to print
+        in the whole script.
+        :param value: value to set on or off the coloring of the text.
+        """
+        ContextPrinter.check_init()
+        ContextPrinter.self.coloring = value
+
+    @staticmethod
+    def set_max_depth(value: int) -> None:
         """
         Sets a maximum number of nested sections after which the printer will stop printing (it will still be able to enter or exit
         deeper sections but without printing their title or their header at all).
@@ -201,7 +237,7 @@ class ContextPrinter:
         ContextPrinter.self.max_depth = value
 
     @staticmethod
-    def set_automatic_skip(value: bool):
+    def set_automatic_skip(value: bool) -> None:
         """
         Sets on or off the automatic skip-line mode of the printer. When it's set to True, it will automatically skip an appropriate
         number of lines when exiting a section. When set to false it will not do anything special when exiting a section.
@@ -210,4 +246,11 @@ class ContextPrinter:
         ContextPrinter.check_init()
         ContextPrinter.self.automatic_skip = value
 
-
+    @staticmethod
+    def set_default_header(value: str) -> None:
+        """
+        Sets a default header text for the sections.
+        :param value: text to set the default header to.
+        """
+        ContextPrinter.check_init()
+        ContextPrinter.self.default_header = value
