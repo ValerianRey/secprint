@@ -51,6 +51,21 @@ class Color(str, Enum):
             text = text.replace(color, '')
         return text
 
+    @staticmethod
+    def rainbow(text: str) -> str:
+        """
+        Return a new text corresponding to the input text colored as a rainbow
+        :param text: text to color.
+        """
+        rainbow_colors = [Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.PURPLE]
+        result = ''
+        i = 0
+        for char in text:
+            result = result + rainbow_colors[i % len(rainbow_colors)] + char + Color.END
+            if char != ' ':
+                i += 1
+        return result
+
 
 class ContextPrinter:
     @staticmethod
