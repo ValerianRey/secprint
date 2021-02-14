@@ -109,7 +109,7 @@ class ContextPrinter:
         ContextPrinter.self.headers.append(color + header + Color.END)
 
     @staticmethod
-    def enter_section(title=None, color: Union[Color, str] = Color.NONE, header: Optional[str] = None) -> None:
+    def enter_section(title: Optional[str] = None, color: Union[Color, str] = Color.NONE, header: Optional[str] = None) -> None:
         """
         Enter a new section with the corresponding color code and prints the corresponding title.
         :param title: name of the section.
@@ -118,15 +118,22 @@ class ContextPrinter:
         string ('') to have no header.
         """
         ContextPrinter.check_init()
-
         if header is None:
             header = ContextPrinter.self.default_header
+
+        if ContextPrinter.self.automatic_skip:
+            ContextPrinter.__skip_lines(ContextPrinter.self.buffered_skiplines)
+            ContextPrinter.self.buffered_skiplines = 0
 
         if ContextPrinter.self.activated:
             if not isinstance(color, Color):
                 color = Color.from_string(color)
+
             if title is not None:
                 ContextPrinter.print(title, color=color, bold=True)
+            else:
+                ContextPrinter.self.print_next_headers = True
+
             ContextPrinter.__add_header(header, color)
 
     @staticmethod
@@ -140,6 +147,20 @@ class ContextPrinter:
 
         if ContextPrinter.self.activated:
             ContextPrinter.self.headers = ContextPrinter.self.headers[:-1]
+
+    @staticmethod
+    def __skip_lines(n_lines: int):
+        for i in range(n_lines):
+            ContextPrinter.__print_line('', end='\n')
+
+    @staticmethod
+    def __print_headers():
+        if ContextPrinter.self.coloring:
+            for header in ContextPrinter.self.headers:
+                print(header, end='')
+        else:
+            for header in ContextPrinter.self.headers:
+                print(Color.remove_colors(header), end='')
 
     @staticmethod
     def __print_line(text: str = '', color: Color = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
@@ -159,12 +180,7 @@ class ContextPrinter:
             print('\r', end='')
 
         if print_headers:
-            if ContextPrinter.self.coloring:
-                for header in ContextPrinter.self.headers:
-                    print(header, end='')
-            else:
-                for header in ContextPrinter.self.headers:
-                    print(Color.remove_colors(header), end='')
+            ContextPrinter.__print_headers()
 
         if ContextPrinter.self.coloring:
             text = color + (Color.BOLD if bold else '') + (Color.UNDERLINE if underline else '') + \
@@ -203,16 +219,11 @@ class ContextPrinter:
             if not isinstance(color, Color):
                 color = Color.from_string(color)
 
-            if ContextPrinter.self.automatic_skip:
-                prefix = '\n' * ContextPrinter.self.buffered_skiplines
-                ContextPrinter.self.buffered_skiplines = 0
-            else:
-                prefix = ''
-
-            lines = (prefix + text).split('\n')
-            for line in lines:
+            lines = text.split('\n')
+            for i, line in enumerate(lines):
+                line_end = end if i == len(lines) - 1 else '\n'
                 ContextPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
-                                            print_headers=print_headers, rewrite=rewrite, end=end)
+                                            print_headers=print_headers, rewrite=rewrite, end=line_end)
 
     @staticmethod
     def activate() -> None:
