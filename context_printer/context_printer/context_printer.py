@@ -98,7 +98,6 @@ class ContextPrinter:
         ContextPrinter.self.buffered_skiplines = 0
         ContextPrinter.self.coloring = True
         ContextPrinter.self.default_header = '█ '
-        ContextPrinter.self.print_next_headers = True
 
     @staticmethod
     def __add_header(header: str, color: Color) -> None:
@@ -156,13 +155,12 @@ class ContextPrinter:
 
     @staticmethod
     def __print_headers():
-        if ContextPrinter.self.print_next_headers:
-            if ContextPrinter.self.coloring:
-                for header in ContextPrinter.self.headers:
-                    print(header, end='')
-            else:
-                for header in ContextPrinter.self.headers:
-                    print(Color.remove_colors(header), end='')
+        if ContextPrinter.self.coloring:
+            for header in ContextPrinter.self.headers:
+                print(header, end='')
+        else:
+            for header in ContextPrinter.self.headers:
+                print(Color.remove_colors(header), end='')
 
     @staticmethod
     def __print_line(text: str = '', color: Color = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
@@ -190,11 +188,6 @@ class ContextPrinter:
         else:
             text = Color.remove_colors(text)  # we still remove the colors in case the user included them in the text itself
         print(text, end=end)
-
-        if end == '\n':
-            ContextPrinter.self.print_next_headers = True
-        else:
-            ContextPrinter.self.print_next_headers = False
 
     @staticmethod
     def print(text='', color: Union[Color, str] = Color.NONE, bold: bool = False, underline: bool = False, blink: bool = False,
