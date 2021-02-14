@@ -123,9 +123,8 @@ class ContextPrinter:
             header = ContextPrinter.self.default_header
 
         if ContextPrinter.self.automatic_skip:
-            skiplines = '\n' * ContextPrinter.self.buffered_skiplines
+            ContextPrinter.__skip_lines(ContextPrinter.self.buffered_skiplines)
             ContextPrinter.self.buffered_skiplines = 0
-            ContextPrinter.print(skiplines, end='')
 
         if ContextPrinter.self.activated:
             if not isinstance(color, Color):
@@ -133,6 +132,9 @@ class ContextPrinter:
 
             if title is not None:
                 ContextPrinter.print(title, color=color, bold=True)
+            else:
+                ContextPrinter.self.print_next_headers = True
+
             ContextPrinter.__add_header(header, color)
 
     @staticmethod
@@ -147,6 +149,10 @@ class ContextPrinter:
         if ContextPrinter.self.activated:
             ContextPrinter.self.headers = ContextPrinter.self.headers[:-1]
 
+    @staticmethod
+    def __skip_lines(n_lines: int):
+        for i in range(n_lines):
+            ContextPrinter.__print_line('', end='\n')
 
     @staticmethod
     def __print_headers():
