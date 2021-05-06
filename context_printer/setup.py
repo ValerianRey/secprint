@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
 
 setup(
    name='context_printer',
-   version='1.0.6',
+   version='1.3.0',
    description='Tool for simple and appealing display of context in which each operation is executer',
    license="",
    long_description=long_description,
