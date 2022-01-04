@@ -9,9 +9,11 @@ the highlighting color and the text color.
 """
 
 import colorama
-colorama.init() # for windows
 
 from context_printer.memory import get_lifo
+
+
+colorama.init() # for windows
 
 
 def _str_to_color(color):

@@ -94,21 +94,26 @@ class Printer:
                 if frame.f_code.co_name == '<module>':
                     title = f'Section l{frame.f_lineno} in {frame.f_code.co_filename}'
                 else:
-                    title = f'Section {frame.f_code.co_name} l{frame.f_lineno} in {frame.f_code.co_filename}'
+                    title = (
+                        f'Section {frame.f_code.co_name} l{frame.f_lineno} '
+                        f'in {frame.f_code.co_filename}'
+                    )
 
             self.print(title, **{**get_lifo().get_layer(), **formatting})
         elif title is not None:
             raise NameError('there is already a title in this section')
-        get_lifo().add_layer(**formatting)
+        get_lifo().add_layer(**formatting, title=False)
 
-    def exit_section(self):
+    @staticmethod
+    def exit_section():
         """
         ** Exits the current section to return to the parent section. **
         """
         get_lifo().remove_layer()
         get_lifo().update_layer(title=False)
 
-    def print(self, message, end='\n', **formatting):
+    @staticmethod
+    def print(message, end='\n', **formatting):
         """
         ** Displays the message with the formatting of the current section. **
 
@@ -123,6 +128,8 @@ class Printer:
         **formatting : dict
             Text formatting parameters. They apply only to this message.
         """
+        if get_lifo().get_layer().get('title', False):
+            raise NameError('there can be a maximum of one title per section')
         # TODO : gérer les retours à la ligne
         section_header = get_section_header()
         print(section_header, end='')
@@ -149,10 +156,10 @@ class Printer:
         self : Printer
             Returns itself around for compatibility with *with*.
         """
-        get_lifo().update_layer(title=True)
-        get_lifo().update_future_layer(**formatting)
         if title is not None:
             self.print(title, **{**get_lifo().get_layer(), **formatting})
+            get_lifo().update_layer(title=True)
+        get_lifo().update_future_layer(**formatting)
         return self
 
     def __enter__(self):
@@ -161,6 +168,5 @@ class Printer:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            # TODO : afficher le message d'erreur
-            pass
+            self.print(f"{colorize('red', exc_type.__name__, kind='bg')}({exc_val})")
         self.exit_section()

@@ -9,11 +9,8 @@ to provide information such as the indentation level
 and the text formatting parameters.
 """
 
-import collections
 import logging
 import multiprocessing
-import os
-import pickle
 import tempfile
 import threading
 
@@ -122,11 +119,12 @@ def get_lifo():
 
     # case in a child process
     if f"_global_fifo_{context['father_proc']}" not in globals():
-        logging.warning(
+        message = (
             f"the process '{context['proc_name']}' "
             f"has not inherited the process '{context['father_proc']}', "
             "use the method 'fork' to create processes"
         )
+        logging.warning(message)
         globals()[f"_global_fifo_{context['father_proc']}"] = {'MainThread': LIFO()}
     globals()[f"_global_fifo_{context['proc_name']}"] = {
         'MainThread': globals()[f"_global_fifo_{context['father_proc']}"]['MainThread'].fork()
