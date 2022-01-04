@@ -29,17 +29,22 @@ def decorate(func):
 
     Examples
     --------
+    >>> from context_printer.memory import reset_lifo
+    >>> reset_lifo()
     >>> from context_printer.decorator import decorate
     >>>
     >>> @decorate
     ... def f(x, y): pass
     ...
-    >>> f(0, 0)
+    >>> f(0, 0) # doctest: +SKIP
     Call f(0, 0)
-    >>> f(0, y=1)
+    █ done, total elapsed time: 3.34 us
+    >>> f(0, y=1) # doctest: +SKIP
     Call f(0, y=1)
-    >>> f(x=1, y=1)
+    █ done, total elapsed time: 1.43 us
+    >>> f(x=1, y=1) # doctest: +SKIP
     Call f(x=1, y=1)
+    █ done, total elapsed time: 1.19 us
     >>>
     """
     file = inspect.getfile(func)
@@ -50,6 +55,7 @@ def decorate(func):
     except AttributeError:
         lineno = None
     name = func.__name__
+
     def decorated(*args, **kwargs):
         signature_kwargs = ', '.join(f'{k}={repr(kwargs[k])}' for k in sorted(kwargs))
         signature = ', '.join(repr(arg) for arg in args)
@@ -62,6 +68,10 @@ def decorate(func):
             message += f' from {file}'
         if lineno is not None and file is not None:
             message += f' l{lineno}'
-        with Printer(message):
-            return func(*args, **kwargs)
+
+        with Printer(message) as ctp:
+            res = func(*args, **kwargs)
+            ctp.print(f'done, total elapsed time: {ctp.elapsed_time()}')
+            return res
+
     return decorated

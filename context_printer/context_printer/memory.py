@@ -13,6 +13,7 @@ import logging
 import multiprocessing
 import tempfile
 import threading
+import time
 
 
 DIR = tempfile.mkdtemp()
@@ -176,6 +177,7 @@ class LIFO:
         >>> queue = LIFO(color='green', toto=True)
         """
         self.lifo.insert(0, {**self.lifo[0], **self.future_context, **new_context})
+        self.lifo[0]['time'] = time.time()
         self.future_context = {}
 
     def get_layer(self):
@@ -195,7 +197,9 @@ class LIFO:
         --------
         >>> from context_printer.memory import LIFO
         >>> def p(dico):
-        ...    print('{' + ', '.join(f'{repr(k)}: {repr(dico[k])}' for k in sorted(dico)) + '}')
+        ...     print('{'
+        ...         + ', '.join(f'{repr(k)}: {repr(dico[k])}' for k in sorted(dico) if k!='time')
+        ...         + '}')
         ...
         >>> queue = LIFO()
         >>> p(queue.get_layer())
@@ -281,8 +285,8 @@ class LIFO:
         >>>
         """
         return f'{repr(self)}:\n' + '\n'.join(
-            f'{"|---"*i}|Layer({", ".join(f"{k}={repr(con[k])}" for k in sorted(con))})'
-            for i, con in enumerate(self.lifo[::-1])
+            f'{"|---"*i}|Layer({", ".join(f"{k}={repr(c[k])}" for k in sorted(c) if k!="time")})'
+            for i, c in enumerate(self.lifo[::-1])
         )
 
     def __repr__(self):

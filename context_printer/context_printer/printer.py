@@ -9,6 +9,7 @@ display blocks without worrying about indentation levels.
 """
 
 import inspect
+import time
 
 from context_printer.memory import get_lifo
 from context_printer.color import get_section_header, colorize
@@ -83,6 +84,19 @@ class Printer:
         **formatting : dict
             Text formatting parameters. These settings will affect
             not only this section but also all child sections.
+
+        Examples
+        --------
+        >>> from context_printer.memory import reset_lifo
+        >>> reset_lifo()
+        >>> from context_printer.printer import Printer
+        >>> ctp = Printer()
+        >>> ctp.enter_section() # doctest: +SKIP
+        Section __run l1336 in /usr/lib/python3.8/doctest.py
+        >>> reset_lifo()
+        >>> ctp.enter_section('Section')
+        Section
+        >>>
         """
         if not get_lifo().get_layer().get('title', False):
             get_lifo().update_future_layer(**formatting)
@@ -114,7 +128,7 @@ class Printer:
 
     @staticmethod
     def print(message, **formatting):
-        """
+        r"""
         ** Displays the message with the formatting of the current section. **
 
         Parameters
@@ -123,6 +137,27 @@ class Printer:
             The message to display
         **formatting : dict
             Text formatting parameters. They apply only to this message.
+
+        Examples
+        --------
+        >>> from context_printer.memory import reset_lifo
+        >>> reset_lifo()
+        >>> from context_printer.printer import Printer
+        >>> ctp = Printer()
+        >>> ctp.print('a simple message')
+        a simple message
+        >>> ctp.print('this is a\nmulti-line message')
+        this is a
+          multi-line message
+        >>> with ctp('Section'):
+        ...     ctp.print('a simple message')
+        ...     ctp.print('this is a\nmulti-line message')
+        ...
+        Section
+        █ a simple message
+        █ this is a
+          multi-line message
+        >>>
         """
         def form(mes):
             if 'color' in formatting:
@@ -138,6 +173,39 @@ class Printer:
             mes = form(mes.strip())
             print(get_section_header(partial=(i!=0)), end='')
             print(mes)
+
+    @staticmethod
+    def elapsed_time():
+        """
+        ** Displays the time elapsed since the entry in the section. **
+
+        Parameters
+        ----------
+        **formatting : dict
+            Text formatting parameters. They apply only to this message.
+
+        Examples
+        --------
+        >>> from context_printer.memory import reset_lifo
+        >>> reset_lifo()
+        >>> from context_printer.printer import Printer
+        >>> with Printer('Section') as ctp:
+        ...     t = ctp.elapsed_time()
+        ...
+        Section
+        >>> t # doctest: +SKIP
+        '1.91 us'
+        >>>
+        """
+        delta_t = time.time() - get_lifo().get_layer()['time']
+        unit = 's'
+        if delta_t < 1:
+            delta_t *= 1000
+            unit = 'ms'
+        if delta_t < 1:
+            delta_t *= 1000
+            unit = 'us'
+        return f'{delta_t:.2f} {unit}'
 
     def __call__(self, title_or_func=None, **formatting):
         """
