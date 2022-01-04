@@ -133,27 +133,21 @@ class Printer:
 
         if get_lifo().get_layer().get('title', False):
             raise NameError('there can be a maximum of one title per section')
-        print(get_section_header(), end='')
-
-        if 'color' in formatting:
-            message = colorize(formatting['color'], message)
-        if 'bg' in formatting:
-            message = colorize(formatting['bg'], message, kind='bg')
 
         for i, mes in enumerate(message.split('\n')):
             mes = form(mes.strip())
-            if i:
-                print(get_section_header(partial=True), end='')
+            print(get_section_header(partial=(i!=0)), end='')
             print(mes)
 
-    def __call__(self, title=None, **formatting):
+    def __call__(self, title_or_func=None, **formatting):
         """
         ** Update the parameters of the section. **
 
         Parameters
         ----------
-        title : str, optional
+        title_or_func : str or callable, optional
             The message to display. None allows to display nothing at all.
+            Otherwise, it can be the function to decorate.
         **formatting : dict
             Text formatting new parameters. These settings will affect
             not only this section but also all child sections.
@@ -163,9 +157,16 @@ class Printer:
         self : Printer
             Returns itself around for compatibility with *with*.
         """
-        if title is not None:
-            self.print(title, **{**get_lifo().get_layer(), **formatting})
+        if isinstance(title_or_func, str):
+            self.print(title_or_func, **{**get_lifo().get_layer(), **formatting})
             get_lifo().update_layer(title=True)
+        elif hasattr(title_or_func, '__call__'):
+            from context_printer.decorator import decorate
+            return decorate(title_or_func)
+        elif title_or_func is not None:
+            raise TypeError(
+                f'the parameter must be str or function, not {title_or_func.__class__.__name__}'
+            )
         get_lifo().update_future_layer(**formatting)
         return self
 
