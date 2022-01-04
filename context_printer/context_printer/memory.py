@@ -74,7 +74,8 @@ def get_lifo():
 
     Examples
     --------
-    >>> from context_printer.memory import get_lifo
+    >>> from context_printer.memory import get_lifo, reset_lifo
+    >>> reset_lifo()
     >>>
     >>> # case in main process and main thread
     >>> print(get_lifo())
@@ -159,6 +160,7 @@ class LIFO:
         """
         self.context = get_id()
         self.lifo = [init_context]
+        self.future_context = {}
 
     def add_layer(self, **new_context):
         """
@@ -175,7 +177,8 @@ class LIFO:
         >>> from context_printer.memory import LIFO
         >>> queue = LIFO(color='green', toto=True)
         """
-        self.lifo.insert(0, {**self.lifo[0], **new_context})
+        self.lifo.insert(0, {**self.lifo[0], **self.future_context, **new_context})
+        self.future_context = {}
 
     def get_layer(self):
         r"""
@@ -235,6 +238,18 @@ class LIFO:
             All unspecified parameters inherit from the previous layer.
         """
         self.lifo[0] = {**self.lifo[0], **new_context}
+
+    def update_future_layer(self, **new_context):
+        """
+        ** Changes the of the parameters of the current layer. **
+
+        Parameters
+        ----------
+        new_context : dict
+            The new layer parameters.
+            All unspecified parameters inherit from the previous layer.
+        """
+        self.future_context = {**self.future_context, **new_context}
 
     def fork(self, **init_context):
         """
