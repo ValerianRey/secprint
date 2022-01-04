@@ -113,7 +113,7 @@ class Printer:
         get_lifo().update_layer(title=False)
 
     @staticmethod
-    def print(message, end='\n', **formatting):
+    def print(message, **formatting):
         """
         ** Displays the message with the formatting of the current section. **
 
@@ -121,23 +121,30 @@ class Printer:
         ----------
         message : str
             The message to display
-        end : str
-            The end character is by default a line break.
-            It is for example possible to put '' to have
-            different text formatting on the same line.
         **formatting : dict
             Text formatting parameters. They apply only to this message.
         """
+        def form(mes):
+            if 'color' in formatting:
+                mes = colorize(formatting['color'], mes)
+            if 'bg' in formatting:
+                mes = colorize(formatting['bg'], mes, kind='bg')
+            return mes
+
         if get_lifo().get_layer().get('title', False):
             raise NameError('there can be a maximum of one title per section')
-        # TODO : gérer les retours à la ligne
-        section_header = get_section_header()
-        print(section_header, end='')
+        print(get_section_header(), end='')
+
         if 'color' in formatting:
             message = colorize(formatting['color'], message)
         if 'bg' in formatting:
             message = colorize(formatting['bg'], message, kind='bg')
-        print(message, end=end)
+
+        for i, mes in enumerate(message.split('\n')):
+            mes = form(mes.strip())
+            if i:
+                print(get_section_header(partial=True), end='')
+            print(mes)
 
     def __call__(self, title=None, **formatting):
         """
@@ -168,5 +175,7 @@ class Printer:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            self.print(f"{colorize('red', exc_type.__name__, kind='bg')}({exc_val})")
+            self.print(
+                f"{colorize('red', exc_type.__name__, kind='bg')} l{exc_tb.tb_lineno} ({exc_val})"
+            )
         self.exit_section()

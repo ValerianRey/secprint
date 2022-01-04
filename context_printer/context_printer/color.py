@@ -145,16 +145,18 @@ def colorize(color, text, *, kind='fg'):
     return style + color_tag + text + reset_tag
 
 
-def get_section_header(header_car='█ '):
+def get_section_header(header_car='█ ', *, partial=False):
     """
     ** Retrieves the tag from the beginning of the current section. **
     """
     header = ''
-    for context in get_lifo().lifo[-2::-1]:
+    for context in get_lifo().lifo[-2::-1] if not partial else get_lifo().lifo[-2:0:-1]:
         formatted_car = header_car
         if 'color' in context:
             formatted_car = colorize(context['color'], formatted_car)
         if 'bg' in context:
             formatted_car = colorize(context['color'], formatted_car, kind='bg')
         header += formatted_car
+    if partial:
+        header += ' '*len(header_car)
     return header
