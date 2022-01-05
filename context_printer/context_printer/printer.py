@@ -12,7 +12,7 @@ import inspect
 import time
 
 from context_printer.memory import get_lifo
-from context_printer.color import get_section_header, colorize
+from context_printer.color import get_section_header, colorize, format_text
 
 
 class Printer:
@@ -113,7 +113,7 @@ class Printer:
                         f'in {frame.f_code.co_filename}'
                     )
 
-            self.print(title, **{**get_lifo().get_layer(), **formatting})
+            self.print(title, **{**get_lifo().get_layer(), **get_lifo().future_context, **formatting})
         elif title is not None:
             raise NameError('there is already a title in this section')
         get_lifo().add_layer(**formatting, title=False)
@@ -127,7 +127,7 @@ class Printer:
         get_lifo().update_layer(title=False)
 
     @staticmethod
-    def print(message, **formatting):
+    def print(message, *, print_headers=True, rewrite=False, end='\n', **formatting):
         r"""
         ** Displays the message with the formatting of the current section. **
 
@@ -135,8 +135,16 @@ class Printer:
         ----------
         message : str
             The message to display
+        print_headers : boolean, optional
+            If set to true, all section headers will be printed before the text.
+        rewrite : boolean, optional
+            If set to true, rewrites over the current line instead of printing a new line.
+        end : str, default='\n'
+            Character to print at the end of the line.
         **formatting : dict
-            Text formatting parameters. They apply only to this message.
+            The text formatting parameters are passed to the
+            ``context_printer.color.format_text`` function.
+            They apply only to this message, they do not affect future messages.
 
         Examples
         --------
@@ -152,27 +160,30 @@ class Printer:
         >>> with ctp('Section'):
         ...     ctp.print('a simple message')
         ...     ctp.print('this is a\nmulti-line message')
+        ...     ctp.print('start of the message ', end='')
+        ...     ctp.print('end of message', print_headers=False)
         ...
         Section
         █ a simple message
         █ this is a
           multi-line message
+        █ start of the message end of message
         >>>
         """
-        def form(mes):
-            if 'color' in formatting:
-                mes = colorize(formatting['color'], mes)
-            if 'bg' in formatting:
-                mes = colorize(formatting['bg'], mes, kind='bg')
-            return mes
-
         if get_lifo().get_layer().get('title', False):
             raise NameError('there can be a maximum of one title per section')
 
-        for i, mes in enumerate(message.split('\n')):
-            mes = form(mes.strip())
-            print(get_section_header(partial=(i!=0)), end='')
-            print(mes)
+        if rewrite:
+            print('\r', end='')
+        messages = message.split('\n')
+        _end = '\n'
+        for i, mes in enumerate(messages):
+            mes = format_text(mes.lstrip(), **formatting)
+            if print_headers:
+                print(get_section_header(partial=(i!=0)), end='')
+            if i == len(messages)-1:
+                _end = end
+            print(mes, end=_end)
 
     @staticmethod
     def elapsed_time():

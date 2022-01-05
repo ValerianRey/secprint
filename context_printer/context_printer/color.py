@@ -145,18 +145,52 @@ def colorize(color, text, *, kind='fg'):
     return style + color_tag + text + reset_tag
 
 
+def format_text(text, **formatting):
+    r"""
+    ** Format the text with the provided parameters. **
+
+    Parameters
+    ----------
+    text : str
+        Text to be printed. It should be in a single line (no \n character).
+    color : str, optional
+        The color of the text (only applies to this message).
+    bg : str, optional
+        The background highlight color (only applies to this message).
+    blink : boolean, optional
+        If set to True, the line will be blinking (not compatible with all consoles).
+    bold : boolean, optional
+        If set to true, prints the text in boldface.
+    underline : boolean, optional
+        If set to true, prints the text underlined.
+
+    Examples
+    --------
+    >>> from context_printer.color import format_text
+    >>> format_text('text')
+    'text'
+    >>>
+    """
+    if 'color' in formatting:
+        text = colorize(formatting['color'], text)
+    if 'bg' in formatting:
+        text = colorize(formatting['bg'], text, kind='bg')
+    if formatting.get('blink', False):
+        text = '\033[5m' + text + '\033[0m'
+    if formatting.get('bold', False):
+        text = '\033[1m' + text + '\033[0m'
+    if formatting.get('underline', False):
+        text = '\033[4m' + text + '\033[0m'
+    return text
+
+
 def get_section_header(header_car='█ ', *, partial=False):
     """
     ** Retrieves the tag from the beginning of the current section. **
     """
     header = ''
     for context in get_lifo().lifo[-2::-1] if not partial else get_lifo().lifo[-2:0:-1]:
-        formatted_car = header_car
-        if 'color' in context:
-            formatted_car = colorize(context['color'], formatted_car)
-        if 'bg' in context:
-            formatted_car = colorize(context['color'], formatted_car, kind='bg')
-        header += formatted_car
+        header += format_text(header_car, **context)
     if partial:
         header += ' '*len(header_car)
     return header
