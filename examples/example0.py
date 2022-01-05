@@ -1,10 +1,3 @@
-Python library to improve console printing by adding context to your prints. It makes your console much cleaner, and you won't have to worry about making your prints beautiful.
-
-Installation:
-> pip install context_printer
-
-Basic usage example:
-```python
 from context_printer import ctp
 
 @ctp
@@ -38,8 +31,3 @@ with ctp('Main Section', color='cyan'):
     with ctp(color='green'):
         ctp.print('this subsection is automatically named')
 ctp.print('we are out of the main section')
-```
-
-The above example will print the following:\
-\
-![alt text](https://github.com/robinechuca/ContextPrinter/blob/main/images/ctp_0.png "Basic example output")

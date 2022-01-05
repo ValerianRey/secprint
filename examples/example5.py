@@ -1,14 +1,14 @@
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+#!/usr/bin/env python3
 
+"""
+Display of a line in several times.
 
-for val in range(0, 8):
-    print(str(val) + ' - \033[' + str(val+30) + 'm' + 'Hello--fezafija' + Color.END)
-    print(str(val) + ' - \033[' + str(val + 90) + 'm' + 'Hello--fezafija' + Color.END)
+MAINMAIN
+█ Helloworld
+"""
 
-print('\033[30mYOOOOO' + Color.END)
-print('\033[90mYOOOOO' + Color.END)
-print('\033[37mYOOOOO' + Color.END)
-print('\033[97mYOOOOO' + Color.END)
+from context_printer import ctp
 
-print()
+with ctp('MAINMAIN'):
+    ctp.print('Hello', end='')
+    ctp.print(' world', print_headers=False)
