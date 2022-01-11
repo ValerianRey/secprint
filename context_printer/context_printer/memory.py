@@ -10,6 +10,7 @@ and the text formatting parameters.
 """
 
 import logging
+import math
 import multiprocessing
 import tempfile
 import threading
@@ -150,7 +151,7 @@ class LIFO:
     the parameters for each indentation.
     """
 
-    def __init__(self, **init_context):
+    def __init__(self, max_depth=math.inf, **init_context):
         """
         Parameters
         ----------
@@ -160,6 +161,7 @@ class LIFO:
         self.context = get_id()
         self.lifo = [init_context]
         self.future_context = {}
+        self.max_depth = max_depth
 
     def add_layer(self, **new_context):
         """
@@ -180,7 +182,7 @@ class LIFO:
         self.lifo[0]['time'] = time.time()
         self.future_context = {}
 
-    def get_layer(self):
+    def get_layer(self, _is_title=False):
         r"""
         ** Retrieves the context of the current layer. **
 
@@ -203,17 +205,18 @@ class LIFO:
         ...
         >>> queue = LIFO()
         >>> p(queue.get_layer())
-        {'indent': 0}
+        {'display': True, 'indent': 0}
         >>> queue.add_layer(titi=True)
         >>> p(queue.get_layer())
-        {'indent': 1, 'titi': True}
+        {'display': True, 'indent': 1, 'titi': True}
         >>> queue.add_layer(toto=False)
         >>> p(queue.get_layer())
-        {'indent': 2, 'titi': True, 'toto': False}
+        {'display': True, 'indent': 2, 'titi': True, 'toto': False}
         >>>
         """
         context = self.lifo[0].copy()
         context['indent'] = len(self.lifo) - 1
+        context['display'] = self.max_depth >= context['indent'] + int(_is_title)
         return context
 
     def remove_layer(self):
@@ -265,7 +268,15 @@ class LIFO:
         init_context : dict
             The initial setup of the forked queue.
         """
-        return LIFO(**self.lifo[0], **init_context)
+        return LIFO(max_depth=self.max_depth, **self.lifo[0], **init_context)
+
+    def set_max_depth(self, value):
+        """
+        ** Sets a maximum number of nested sections. **
+
+        alias to ``context_printer.printer.Printer.set_max_depth``
+        """
+        self.max_depth = value
 
     def __str__(self):
         """

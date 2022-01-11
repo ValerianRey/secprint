@@ -18,31 +18,6 @@ from context_printer.color import get_section_header, colorize, format_text
 class Printer:
     """
     ** Main class, only the instance is manipulated. **
-
-    Examples
-    --------
-    >>> from context_printer.memory import reset_lifo
-    >>> reset_lifo()
-    >>> from context_printer.printer import Printer
-    >>>
-    >>> with Printer('Main section') as ctp:
-    ...     ctp.print('Text in main section')
-    ...     for i in range(3):
-    ...         with ctp(f'Subsection {i+1}'):
-    ...             ctp.print('Text in subsection')
-    ...             ctp.print('Text in subsection')
-    ...
-    Main section
-    █ Text in main section
-    █ Subsection 1
-    █ █ Text in subsection
-    █ █ Text in subsection
-    █ Subsection 2
-    █ █ Text in subsection
-    █ █ Text in subsection
-    █ Subsection 3
-    █ █ Text in subsection
-    █ █ Text in subsection
     """
 
     def __new__(cls, title=None, **formatting):
@@ -113,7 +88,11 @@ class Printer:
                         f'in {frame.f_code.co_filename}'
                     )
 
-            self.print(title, **{**get_lifo().get_layer(), **get_lifo().future_context, **formatting})
+            self.print(
+                title,
+                _is_title=True,
+                **{**get_lifo().get_layer(), **get_lifo().future_context, **formatting}
+            )
         elif title is not None:
             raise NameError('there is already a title in this section')
         get_lifo().add_layer(**formatting, title=False)
@@ -127,7 +106,8 @@ class Printer:
         get_lifo().update_layer(title=False)
 
     @staticmethod
-    def print(message, *, print_headers=True, rewrite=False, end='\n', **formatting):
+    def print(message, *, print_headers=True, rewrite=False, end='\n',
+         _is_title=False, **formatting):
         r"""
         ** Displays the message with the formatting of the current section. **
 
@@ -170,20 +150,22 @@ class Printer:
         █ start of the message end of message
         >>>
         """
-        if get_lifo().get_layer().get('title', False):
+        layer = get_lifo().get_layer(_is_title=_is_title)
+        if layer.get('title', False):
             raise NameError('there can be a maximum of one title per section')
 
-        if rewrite:
-            print('\r', end='')
-        messages = message.split('\n')
-        _end = '\n'
-        for i, mes in enumerate(messages):
-            mes = format_text(mes.lstrip(), **formatting)
-            if print_headers:
-                print(get_section_header(partial=(i!=0)), end='')
-            if i == len(messages)-1:
-                _end = end
-            print(mes, end=_end)
+        if layer['display']:
+            if rewrite:
+                print('\r', end='')
+            messages = message.split('\n')
+            _end = '\n'
+            for i, mes in enumerate(messages):
+                mes = format_text(mes.lstrip(), **formatting)
+                if print_headers:
+                    print(get_section_header(partial=(i!=0)), end='')
+                if i == len(messages)-1:
+                    _end = end
+                print(mes, end=_end)
 
     @staticmethod
     def elapsed_time():
@@ -218,9 +200,44 @@ class Printer:
             unit = 'us'
         return f'{delta_t:.2f} {unit}'
 
+    @staticmethod
+    def set_max_depth(value):
+        """
+        ** Sets a maximum number of nested sections after which the printer will stop printing. **
+
+        It will still be able to enter or exit deeper sections
+        but without printing their title or their header at all.
+
+        Parameters
+        ----------
+        value : int
+            Value to set to the max depth parameter.
+
+        Examples
+        --------
+        >>> from context_printer.memory import reset_lifo
+        >>> reset_lifo()
+        >>> from context_printer.printer import Printer
+        >>> ctp = Printer()
+        >>> ctp.set_max_depth(2)
+        >>> with ctp('Section 1'):
+        ...     ctp.print('text in section 1')
+        ...     with ctp('Section 2'):
+        ...         ctp.print('text in section 2')
+        ...         with ctp('Section 3'):
+        ...             ctp.print('text in section 3')
+        ...
+        Section 1
+        █ text in section 1
+        █ Section 2
+        █ █ text in section 2
+        >>>
+        """
+        get_lifo().set_max_depth(value)
+
     def __call__(self, title_or_func=None, **formatting):
         """
-        ** Update the parameters of the section. **
+        ** Update the parameters of the child section. **
 
         Parameters
         ----------
@@ -229,7 +246,7 @@ class Printer:
             Otherwise, it can be the function to decorate.
         **formatting : dict
             Text formatting new parameters. These settings will affect
-            not only this section but also all child sections.
+            not only the child section but also all child of child sections.
 
         Returns
         -------
@@ -237,7 +254,7 @@ class Printer:
             Returns itself around for compatibility with *with*.
         """
         if isinstance(title_or_func, str):
-            self.print(title_or_func, **{**get_lifo().get_layer(), **formatting})
+            self.print(title_or_func, _is_title=True, **{**get_lifo().get_layer(), **formatting})
             get_lifo().update_layer(title=True)
         elif hasattr(title_or_func, '__call__'):
             from context_printer.decorator import decorate
