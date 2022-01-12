@@ -12,6 +12,7 @@ and the text formatting parameters.
 import logging
 import math
 import multiprocessing
+import sys
 import tempfile
 import threading
 import time
@@ -53,8 +54,17 @@ def get_id():
     """
     proc_name = multiprocessing.current_process().name
     thread_name = threading.current_thread().name
-    father_proc = multiprocessing.parent_process()
-    father_proc = father_proc.name if father_proc is not None else None
+    try:
+        father_proc = multiprocessing.parent_process()
+    except AttributeError: # if python version < 3.8
+        message = (
+            'please use a version of python >= 3.8 if you do multiprocessing, your current version is '
+            f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
+        )
+        logging.warning(message)
+        father_proc = None
+    else:
+        father_proc = father_proc.name if father_proc is not None else None
     return {'proc_name': proc_name, 'thread_name': thread_name, 'father_proc': father_proc}
 
 
