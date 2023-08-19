@@ -280,3 +280,31 @@ class ContextPrinter:
         """
         ContextPrinter.check_init()
         ContextPrinter.self.default_header = value
+
+    def __init__(self, title: str = '', color: Union[Color, str] = Color.NONE, header: Optional[str] = None):
+        # This is a shortcut (Ahem... disgusting trick...) to call
+        # a static method of ContextPrinter directly.
+        ContextPrinter.enter_section(title, color, header)
+
+    @staticmethod
+    def __enter__() -> None:
+        pass
+
+    @staticmethod
+    def __exit__(exc_type, exc_val, exc_tb) -> None:
+        ContextPrinter.exit_section()
+
+    @staticmethod
+    def section(text: str = '', color: Union[Color, str] = Color.NONE):
+        """
+        Parametrized decorator that allows to set a function to do its job inside a Ctp context.
+        """
+
+        def decorator(func):
+            def func_in_section(*args, **kwargs):
+                with ContextPrinter(text, color):
+                    func(*args, **kwargs)
+
+            return func_in_section
+
+        return decorator

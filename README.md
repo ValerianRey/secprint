@@ -15,7 +15,21 @@ for i in range(3):
     Ctp.print('Text in subsection')
     Ctp.exit_section()
 Ctp.exit_section()
+```
 
+Advanced usage example, using contexts and automatic line skips when exiting sections:
+```python
+from context_printer import ContextPrinter as Ctp
+
+Ctp.set_automatic_skip(True)
+
+
+with Ctp("Main section", color="blue"):
+    Ctp.print('Text in main section')
+    for i in range(3):
+        with Ctp(f"Subsection {i + 1}"):
+            Ctp.print('Text in subsection')
+            Ctp.print('Text in subsection')
 ```
 
 The above example will print the following:\
