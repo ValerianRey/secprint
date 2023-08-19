@@ -13,7 +13,7 @@ setup(
    author="Bonvin Etienne, Rey Valérian",
    author_email="etienne.bonvin@epfl.ch, valerian.rey@epfl.ch",
    url="",
-   package_dir = {"context_printer": "context_printer"},
+   package_dir={"context_printer": "context_printer"},
    packages=["context_printer"],
    include_package_data=True,
 )
