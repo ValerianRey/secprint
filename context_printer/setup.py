@@ -1,19 +1,19 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
    name='context_printer',
-   version='1.3.0',
-   description='Tool for simple and appealing display of context in which each operation is executer',
+   version='1.4.0',
+   description='Tool for simple display of context in which each operation is executed.',
    license="",
    long_description=long_description,
    long_description_content_type="text/markdown",
-   author="Bonvin Etienne, Rey Valérian",
-   author_email="etienne.bonvin@epfl.ch, valerian.rey@epfl.ch",
+   author="Bonvin Etienne, Rey Valérian, Robin Richard",
+   author_email="etienne.bonvin@epfl.ch, valerian.rey@epfl.ch, raisin@ecomail.fr",
    url="",
-   package_dir = {"context_printer": "context_printer"},
+   package_dir={"context_printer": "context_printer"},
    packages=["context_printer"],
    include_package_data=True,
 )
