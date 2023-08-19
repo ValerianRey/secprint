@@ -17,6 +17,10 @@ for i in range(3):
 Ctp.exit_section()
 ```
 
+The above example will print the following:\
+\
+![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/ctp_1.png "Basic example output")
+
 Advanced usage example, using contexts and automatic line skips when exiting sections:
 ```python
 from context_printer import ContextPrinter as Ctp
@@ -34,7 +38,7 @@ with Ctp("Main section", color="blue"):
 
 The above example will print the following:\
 \
-![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/ctp_1.png "Basic example output")
+![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/ctp_2.png "Basic example output")
 
 > Warning: This library is not maintained anymore and its implementation uses questionable python
 > tricks. It is advised for anyone interested in continuing it to figure out a better implementation
