@@ -1,5 +1,11 @@
 Python library to improve console printing by adding context to your prints. It makes your console much cleaner, and you won't have to worry about making your prints beautiful.
 
+> Warning: This library is not maintained anymore and its implementation uses questionable python
+> tricks. It is advised for anyone interested in continuing it to figure out a better implementation
+> and to start over with an entirely new project.
+> A fork with more some additional features and more maintenance efforts is available at 
+> https://pypi.org/project/context-verbose/
+
 Installation:
 > pip install context_printer
 
@@ -39,9 +45,3 @@ with Ctp("Main section", color="blue"):
 The above example will print the following:\
 \
 ![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/ctp_2.png "Basic example output")
-
-> Warning: This library is not maintained anymore and its implementation uses questionable python
-> tricks. It is advised for anyone interested in continuing it to figure out a better implementation
-> and to start over with an entirely new project.
-> A fork with more some additional features and more maintenance efforts is available at 
-> https://pypi.org/project/context-verbose/
