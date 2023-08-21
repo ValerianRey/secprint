@@ -43,3 +43,5 @@ The above example will print the following:\
 > Warning: This library is not maintained anymore and its implementation uses questionable python
 > tricks. It is advised for anyone interested in continuing it to figure out a better implementation
 > and to start over with an entirely new project.
+> A fork with more some additional features and more maintenance efforts is available at 
+> https://pypi.org/project/context-verbose/
