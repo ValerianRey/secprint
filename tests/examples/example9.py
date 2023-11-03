@@ -1,0 +1,20 @@
+from secprint import SectionPrinter as Spt
+from secprint import Color
+
+Spt.set_automatic_skip(True)
+Spt.print('Hello')
+Spt.print('Hello')
+Spt.print('Hello')
+Spt.print('Hello')
+Spt.enter_section('MAINMAIN')
+Spt.enter_section('MAIN')
+Spt.enter_section('Section')
+Spt.enter_section('Subsection')
+Spt.enter_section('Subsubsection')
+Spt.exit_section()
+Spt.exit_section()
+Spt.exit_section()
+Spt.exit_section()
+Spt.print('Hello')
+Spt.exit_section()
+Spt.enter_section('New section')

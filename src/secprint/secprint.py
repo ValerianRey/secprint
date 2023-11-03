@@ -67,17 +67,17 @@ class Color(str, Enum):
         return result
 
 
-class ContextPrinter:
+class SectionPrinter:
     @staticmethod
     def check_init() -> None:
         """
         Verify that the OutputDecorator is correctly initialized.
         """
         try:
-            ContextPrinter.self.is_init
+            SectionPrinter.self.is_init
         except AttributeError:
-            ContextPrinter.reset()
-            ContextPrinter.self.is_init = True
+            SectionPrinter.reset()
+            SectionPrinter.self.is_init = True
 
     @staticmethod
     def self() -> None:
@@ -91,13 +91,13 @@ class ContextPrinter:
         """
         Reset the parameters of the decorator.
         """
-        ContextPrinter.self.headers = []
-        ContextPrinter.self.activated = True
-        ContextPrinter.self.max_depth = None
-        ContextPrinter.self.automatic_skip = False
-        ContextPrinter.self.buffered_skiplines = 0
-        ContextPrinter.self.coloring = True
-        ContextPrinter.self.default_header = '█ '
+        SectionPrinter.self.headers = []
+        SectionPrinter.self.activated = True
+        SectionPrinter.self.max_depth = None
+        SectionPrinter.self.automatic_skip = False
+        SectionPrinter.self.buffered_skiplines = 0
+        SectionPrinter.self.coloring = True
+        SectionPrinter.self.default_header = '█ '
 
     @staticmethod
     def __add_header(header: str, color: Color) -> None:
@@ -106,7 +106,7 @@ class ContextPrinter:
         :param header: header string to print.
         :param color: color of the header to print.
         """
-        ContextPrinter.self.headers.append(color + header + Color.END)
+        SectionPrinter.self.headers.append(color + header + Color.END)
 
     @staticmethod
     def enter_section(title: Optional[str] = None, color: Union[Color, str] = Color.NONE, header: Optional[str] = None) -> None:
@@ -117,49 +117,49 @@ class ContextPrinter:
         :param header: string to use as header for the whole section. Leave it as None to use the default value. Use an empty
         string ('') to have no header.
         """
-        ContextPrinter.check_init()
+        SectionPrinter.check_init()
         if header is None:
-            header = ContextPrinter.self.default_header
+            header = SectionPrinter.self.default_header
 
-        if ContextPrinter.self.automatic_skip:
-            ContextPrinter.__skip_lines(ContextPrinter.self.buffered_skiplines)
-            ContextPrinter.self.buffered_skiplines = 0
+        if SectionPrinter.self.automatic_skip:
+            SectionPrinter.__skip_lines(SectionPrinter.self.buffered_skiplines)
+            SectionPrinter.self.buffered_skiplines = 0
 
-        if ContextPrinter.self.activated:
+        if SectionPrinter.self.activated:
             if not isinstance(color, Color):
                 color = Color.from_string(color)
 
             if title is not None:
-                ContextPrinter.print(title, color=color, bold=True)
+                SectionPrinter.print(title, color=color, bold=True)
             else:
-                ContextPrinter.self.print_next_headers = True
+                SectionPrinter.self.print_next_headers = True
 
-            ContextPrinter.__add_header(header, color)
+            SectionPrinter.__add_header(header, color)
 
     @staticmethod
     def exit_section() -> None:
         """
         Exit the last section added.
         """
-        if ContextPrinter.self.automatic_skip:
-            if ContextPrinter.self.max_depth is None or ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers):
-                ContextPrinter.self.buffered_skiplines += 1
+        if SectionPrinter.self.automatic_skip:
+            if SectionPrinter.self.max_depth is None or SectionPrinter.self.max_depth >= len(SectionPrinter.self.headers):
+                SectionPrinter.self.buffered_skiplines += 1
 
-        if ContextPrinter.self.activated:
-            ContextPrinter.self.headers = ContextPrinter.self.headers[:-1]
+        if SectionPrinter.self.activated:
+            SectionPrinter.self.headers = SectionPrinter.self.headers[:-1]
 
     @staticmethod
     def __skip_lines(n_lines: int):
         for i in range(n_lines):
-            ContextPrinter.__print_line('', end='\n')
+            SectionPrinter.__print_line('', end='\n')
 
     @staticmethod
     def __print_headers():
-        if ContextPrinter.self.coloring:
-            for header in ContextPrinter.self.headers:
+        if SectionPrinter.self.coloring:
+            for header in SectionPrinter.self.headers:
                 print(header, end='')
         else:
-            for header in ContextPrinter.self.headers:
+            for header in SectionPrinter.self.headers:
                 print(Color.remove_colors(header), end='')
 
     @staticmethod
@@ -180,9 +180,9 @@ class ContextPrinter:
             print('\r', end='')
 
         if print_headers:
-            ContextPrinter.__print_headers()
+            SectionPrinter.__print_headers()
 
-        if ContextPrinter.self.coloring:
+        if SectionPrinter.self.coloring:
             text = color + (Color.BOLD if bold else '') + (Color.UNDERLINE if underline else '') + \
                    (Color.BLINK if blink else '') + text + Color.END
         else:
@@ -203,10 +203,10 @@ class ContextPrinter:
         :param rewrite: if set to true, rewrites over the current line instead of printing a new line.
         :param end: character to print at the end of the text.
         """
-        ContextPrinter.check_init()
+        SectionPrinter.check_init()
 
-        if ContextPrinter.self.activated and (ContextPrinter.self.max_depth is None or
-                                              ContextPrinter.self.max_depth >= len(ContextPrinter.self.headers)):
+        if SectionPrinter.self.activated and (SectionPrinter.self.max_depth is None or
+                                              SectionPrinter.self.max_depth >= len(SectionPrinter.self.headers)):
             if not isinstance(text, str):
                 try:
                     text = str(text)
@@ -222,7 +222,7 @@ class ContextPrinter:
             lines = text.split('\n')
             for i, line in enumerate(lines):
                 line_end = end if i == len(lines) - 1 else '\n'
-                ContextPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
+                SectionPrinter.__print_line(line, color=color, bold=bold, underline=underline, blink=blink,
                                             print_headers=print_headers, rewrite=rewrite, end=line_end)
 
     @staticmethod
@@ -230,16 +230,16 @@ class ContextPrinter:
         """
         Reactivate the printer so that it gets back to work after a call to deactivate.
         """
-        ContextPrinter.check_init()
-        ContextPrinter.self.activated = True
+        SectionPrinter.check_init()
+        SectionPrinter.self.activated = True
 
     @staticmethod
     def deactivate() -> None:
         """
         Deactivate the printer so that it does not do anything (printing, entering sections, exiting sections) until reactivation.
         """
-        ContextPrinter.check_init()
-        ContextPrinter.self.activated = False
+        SectionPrinter.check_init()
+        SectionPrinter.self.activated = False
 
     @staticmethod
     def set_coloring(value: bool) -> None:
@@ -249,8 +249,8 @@ class ContextPrinter:
         in the whole script.
         :param value: value to set on or off the coloring of the text.
         """
-        ContextPrinter.check_init()
-        ContextPrinter.self.coloring = value
+        SectionPrinter.check_init()
+        SectionPrinter.self.coloring = value
 
     @staticmethod
     def set_max_depth(value: int) -> None:
@@ -259,8 +259,8 @@ class ContextPrinter:
         deeper sections but without printing their title or their header at all).
         :param value: value to set to the max depth parameter.
         """
-        ContextPrinter.check_init()
-        ContextPrinter.self.max_depth = value
+        SectionPrinter.check_init()
+        SectionPrinter.self.max_depth = value
 
     @staticmethod
     def set_automatic_skip(value: bool) -> None:
@@ -269,8 +269,8 @@ class ContextPrinter:
         number of lines when exiting a section. When set to false it will not do anything special when exiting a section.
         :param value: value to set on or off the automatic skip-line mode.
         """
-        ContextPrinter.check_init()
-        ContextPrinter.self.automatic_skip = value
+        SectionPrinter.check_init()
+        SectionPrinter.self.automatic_skip = value
 
     @staticmethod
     def set_default_header(value: str) -> None:
@@ -278,13 +278,13 @@ class ContextPrinter:
         Sets a default header text for the sections.
         :param value: text to set the default header to.
         """
-        ContextPrinter.check_init()
-        ContextPrinter.self.default_header = value
+        SectionPrinter.check_init()
+        SectionPrinter.self.default_header = value
 
     def __init__(self, title: str = '', color: Union[Color, str] = Color.NONE, header: Optional[str] = None):
         # This is a shortcut (Ahem... disgusting trick...) to call
-        # a static method of ContextPrinter directly.
-        ContextPrinter.enter_section(title, color, header)
+        # a static method of SectionPrinter directly.
+        SectionPrinter.enter_section(title, color, header)
 
     @staticmethod
     def __enter__() -> None:
@@ -292,17 +292,17 @@ class ContextPrinter:
 
     @staticmethod
     def __exit__(exc_type, exc_val, exc_tb) -> None:
-        ContextPrinter.exit_section()
+        SectionPrinter.exit_section()
 
     @staticmethod
     def section(text: str = '', color: Union[Color, str] = Color.NONE):
         """
-        Parametrized decorator that allows to set a function to do its job inside a Ctp context.
+        Parametrized decorator that allows to set a function to do its job inside a SectionPrinter section.
         """
 
         def decorator(func):
             def func_in_section(*args, **kwargs):
-                with ContextPrinter(text, color):
+                with SectionPrinter(text, color):
                     func(*args, **kwargs)
 
             return func_in_section
