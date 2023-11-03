@@ -1,15 +1,15 @@
-from context_printer import ContextPrinter as Ctp
+from secprint import SectionPrinter as Spt
 
 
-@Ctp.section("New section", color="Purple")
+@Spt.section("New section", color="Purple")
 def print_text(text: str) -> None:
-    Ctp.print(text)
-    Ctp.print(text)
-    Ctp.print(text)
-    raise ValueError("This text should be printed out of any context")
+    Spt.print(text)
+    Spt.print(text)
+    Spt.print(text)
+    raise ValueError("This text should be printed out of any section")
 
 
 try:
     print_text("Text in section")
 except ValueError as e:
-    Ctp.print(e)
+    Spt.print(e)

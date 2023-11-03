@@ -1,5 +1,5 @@
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+from secprint import SectionPrinter as Spt
+from secprint import Color
 
 
 for val in range(0, 8):

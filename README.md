@@ -7,41 +7,42 @@ Python library to improve console printing by adding context to your prints. It 
 > https://pypi.org/project/context-verbose/
 
 Installation:
-> pip install context_printer
+> pip install secprint
 
 Basic usage example:
-```python
-from context_printer import ContextPrinter as Ctp
 
-Ctp.enter_section('Main section', color='blue')
-Ctp.print('Text in main section')
+```python
+from secprint import SectionPrinter as Spt
+
+Spt.enter_section('Main section', color='blue')
+Spt.print('Text in main section')
 for i in range(3):
-    Ctp.enter_section('Subsection {}'.format(i + 1))
-    Ctp.print('Text in subsection')
-    Ctp.print('Text in subsection')
-    Ctp.exit_section()
-Ctp.exit_section()
+    Spt.enter_section('Subsection {}'.format(i + 1))
+    Spt.print('Text in subsection')
+    Spt.print('Text in subsection')
+    Spt.exit_section()
+Spt.exit_section()
 ```
 
 The above example will print the following:\
 \
-![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/ctp_1.png "Basic example output")
+![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/secprint_1.png "Basic example output")
 
 Advanced usage example, using contexts and automatic line skips when exiting sections:
+
 ```python
-from context_printer import ContextPrinter as Ctp
+from secprint import SectionPrinter as Spt
 
-Ctp.set_automatic_skip(True)
+Spt.set_automatic_skip(True)
 
-
-with Ctp("Main section", color="blue"):
-    Ctp.print('Text in main section')
+with Spt("Main section", color="blue"):
+    Spt.print('Text in main section')
     for i in range(3):
-        with Ctp(f"Subsection {i + 1}"):
-            Ctp.print('Text in subsection')
-            Ctp.print('Text in subsection')
+        with Spt(f"Subsection {i + 1}"):
+            Spt.print('Text in subsection')
+            Spt.print('Text in subsection')
 ```
 
 The above example will print the following:\
 \
-![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/ctp_2.png "Basic example output")
+![alt text](https://github.com/ValerianRey/ContextPrinter/blob/main/images/secprint_2.png "Basic example output")

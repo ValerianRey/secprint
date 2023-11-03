@@ -1,12 +1,12 @@
 import numpy as np
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+from secprint import SectionPrinter as Spt
+from secprint import Color
 
 arr = np.array([2, 4, 6])
-Ctp.enter_section(arr, Color.RED)
-Ctp.print(arr)
-Ctp.print(arr)
-Ctp.print(arr)
+Spt.enter_section(arr, Color.RED)
+Spt.print(arr)
+Spt.print(arr)
+Spt.print(arr)
 
 for color in Color:
-    Ctp.print(color + "text" + Color.END)
+    Spt.print(color + "text" + Color.END)

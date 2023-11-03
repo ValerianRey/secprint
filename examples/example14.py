@@ -1,6 +1,6 @@
-from context_printer import ContextPrinter as Ctp
+from secprint import SectionPrinter as Spt
 
 
-Ctp.enter_section('MAINMAIN')
-Ctp.print('Hello', end='')
-Ctp.print(' world', end='', print_headers=False)
+Spt.enter_section('MAINMAIN')
+Spt.print('Hello', end='')
+Spt.print(' world', end='', print_headers=False)

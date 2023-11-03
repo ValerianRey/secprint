@@ -1,11 +1,11 @@
-from context_printer import ContextPrinter as Ctp
+from secprint import SectionPrinter as Spt
 
 
-@Ctp.section("New section", color="Purple")
+@Spt.section("New section", color="Purple")
 def print_text(text: str) -> None:
-    Ctp.print(text)
-    Ctp.print(text)
-    Ctp.print(text)
+    Spt.print(text)
+    Spt.print(text)
+    Spt.print(text)
 
 
 print_text("Text in section")

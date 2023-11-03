@@ -1,16 +1,16 @@
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+from secprint import SectionPrinter as Spt
+from secprint import Color
 
-Ctp.set_default_header('☣ ')
-Ctp.enter_section('MAIN TITLE')
+Spt.set_default_header('☣ ')
+Spt.enter_section('MAIN TITLE')
 
-Ctp.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
+Spt.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
                         ' incididunt ut labore et dolore magna aliqua.'))
-Ctp.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
+Spt.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
                         ' incididunt ut labore et dolore magna aliqua.'))
-Ctp.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
+Spt.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
                         ' incididunt ut labore et dolore magna aliqua.'))
-Ctp.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
+Spt.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
                         ' incididunt ut labore et dolore magna aliqua.'))
-Ctp.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
+Spt.print(Color.rainbow('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor'
                         ' incididunt ut labore et dolore magna aliqua.'))

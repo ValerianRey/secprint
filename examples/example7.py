@@ -1,13 +1,13 @@
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+from secprint import SectionPrinter as Spt
+from secprint import Color
 
-Ctp.enter_section('New section')
-Ctp.print('Text that will be printed with a white header')
-Ctp.deactivate()
-Ctp.enter_section('New subsection')
-Ctp.print('Text that will not be printed')
-Ctp.exit_section()
-Ctp.activate()
-Ctp.exit_section()
-Ctp.enter_section('New section', Color.RED)
-Ctp.print('Text that will be printed with a red header')
+Spt.enter_section('New section')
+Spt.print('Text that will be printed with a white header')
+Spt.deactivate()
+Spt.enter_section('New subsection')
+Spt.print('Text that will not be printed')
+Spt.exit_section()
+Spt.activate()
+Spt.exit_section()
+Spt.enter_section('New section', Color.RED)
+Spt.print('Text that will be printed with a red header')

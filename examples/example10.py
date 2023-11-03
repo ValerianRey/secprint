@@ -1,10 +1,10 @@
-from context_printer import ContextPrinter as Ctp
+from secprint import SectionPrinter as Spt
 
-Ctp.enter_section('Main section', color='blue')
-Ctp.print('Text in main section')
+Spt.enter_section('Main section', color='blue')
+Spt.print('Text in main section')
 for i in range(3):
-    Ctp.enter_section('Subsection {}'.format(i + 1))
-    Ctp.print('Text in subsection')
-    Ctp.print('Text in subsection')
-    Ctp.exit_section()
-Ctp.exit_section()
+    Spt.enter_section('Subsection {}'.format(i + 1))
+    Spt.print('Text in subsection')
+    Spt.print('Text in subsection')
+    Spt.exit_section()
+Spt.exit_section()

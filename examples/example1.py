@@ -1,5 +1,5 @@
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+from secprint import SectionPrinter as Spt
+from secprint import Color
 
 
 class Example1:
@@ -9,12 +9,12 @@ class Example1:
 
     @staticmethod
     def start_stuff():
-        Ctp.enter_section("Example1 is starting to do stuff", Color.GREEN)
+        Spt.enter_section("Example1 is starting to do stuff", Color.GREEN)
 
     @staticmethod
     def end_stuff():
-        Ctp.print("Example1 is done doing stuff")
-        Ctp.exit_section()
+        Spt.print("Example1 is done doing stuff")
+        Spt.exit_section()
 
 
 

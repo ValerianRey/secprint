@@ -1,15 +1,15 @@
-from context_printer import ContextPrinter as Ctp
-from context_printer import Color
+from secprint import SectionPrinter as Spt
+from secprint import Color
 
-Ctp.enter_section('Mega section of the dead', color=Color.BLINK)
-Ctp.enter_section('Normal section', Color.RED)
-Ctp.enter_section('Subsection', Color.GREEN)
+Spt.enter_section('Mega section of the dead', color=Color.BLINK)
+Spt.enter_section('Normal section', Color.RED)
+Spt.enter_section('Subsection', Color.GREEN)
 for i in range(15):
-    Ctp.print('This ', end='')
-    Ctp.print('is ', blink=True, print_headers=False, end='')
-    Ctp.print('dope ', print_headers=False, end='')
-    Ctp.print('shit', print_headers=False, blink=True)
-Ctp.exit_section()
+    Spt.print('This ', end='')
+    Spt.print('is ', blink=True, print_headers=False, end='')
+    Spt.print('dope ', print_headers=False, end='')
+    Spt.print('shit', print_headers=False, blink=True)
+Spt.exit_section()
 
 print('NONE - ' + Color.NONE + 'YOOOO' + Color.END)
 print('BLACK - ' + Color.BLACK + 'YOOOO' + Color.END)
