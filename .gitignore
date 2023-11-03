@@ -1,3 +1,8 @@
+# pdm
+.pdm-python
+pdm.lock  
+# not really relevant since we don't have dependencies
+
 # Pycharm
 .idea/
 

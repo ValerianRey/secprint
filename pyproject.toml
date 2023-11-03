@@ -1,0 +1,17 @@
+[project]
+name = "secprint"
+version = "0.1.0"
+description = "Python library to improve console printing by adding context to your prints. It makes your console much cleaner, and you won't have to worry about making your prints beautiful."
+authors = [
+    {name = "Valerian Rey", email = "valerian.rey@gmail.com"},
+    {name = "Etienne Bonvin", email = "etienne.bonvin@epfl.ch"},
+
+]
+dependencies = []
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
