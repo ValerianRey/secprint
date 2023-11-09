@@ -7,7 +7,9 @@ Python library to improve console printing by adding context to your prints. It 
 > https://pypi.org/project/context-verbose/
 
 Installation:
-> pip install secprint
+```
+pip install secprint
+```
 
 Basic usage example:
 
